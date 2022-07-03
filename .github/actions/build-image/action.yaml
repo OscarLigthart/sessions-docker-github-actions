@@ -1,0 +1,24 @@
+name: 'Image builder'
+description: 'Action to build a Docker image'
+inputs:
+  file:
+    description: 'The Dockerfile to be used for building the image'
+    required: true
+  target:
+    description: 'The name of the target image to be built'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+      - name: Build ${{ inputs.target }}
+        run: docker build -t ${{ inputs.target }}:${{ github.sha }} -f ${{ inputs.file }} .
+        shell: bash
+      - name: Tag ${{ inputs.target }}
+        run: docker tag ${{ inputs.target }}:${{ github.sha }} ${{ inputs.target }}:latest
+        shell: bash
+      - name: Test and push (if on main) ${{ inputs.target }}
+        run: |
+          docker push ${{ inputs.target }}:latest
+        shell: bash
+

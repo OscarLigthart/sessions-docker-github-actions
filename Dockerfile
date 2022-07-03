@@ -1,6 +1,13 @@
 # inherit from python 3.9
 FROM python:3.9
 
+RUN apt-get update && \
+  apt-get install --no-install-recommends --no-install-suggests --yes \
+  libgl1-mesa-glx \
+  && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
 # create app directory
 WORKDIR /app
 
